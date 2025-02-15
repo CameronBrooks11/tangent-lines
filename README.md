@@ -1,6 +1,6 @@
 # tangent-lines
 
-Math behind calculating tangent lines of a circle done in OpenSCAD
+Math behind calculating tangent lines on a circle done in OpenSCAD
 
 ## Introduction
 
