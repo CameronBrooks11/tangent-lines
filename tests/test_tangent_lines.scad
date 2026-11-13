@@ -65,4 +65,16 @@ L = TouchPoint(C1, R1, C4, R4);
 assert(on_circle(L, C1, R1), "outside touch point is on the first circle");
 assert(on_circle(L, C4, R4), "outside touch point is on the second circle");
 
+// A small circle touching the inside of a big one, passed in either order.
+Cs = [ -30, 0 ];
+Rs = 10;
+Cb = [ 0, 0 ];
+Rb = 40;
+for (pair = [ [ Cs, Rs, Cb, Rb ], [ Cb, Rb, Cs, Rs ] ])
+{
+    M = TouchPoint(pair[0], pair[1], pair[2], pair[3]);
+    assert(on_circle(M, Cs, Rs), str("inside touch point ", M, " is on the small circle"));
+    assert(on_circle(M, Cb, Rb), str("inside touch point ", M, " is on the big circle"));
+}
+
 echo("tangent_lines: all checks passed");
