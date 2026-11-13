@@ -2,7 +2,7 @@
 //
 // This is a script used for a tutorial about
 // the tangent lines of a circle.
-// This tutorial uses the file "Tangent Lines.scad".
+// This tutorial uses the file "tangent_lines.scad".
 //
 // Version 1
 // October 6, 2024
@@ -20,9 +20,9 @@
 
 $fn = 100;
 
-include <Tangent Lines.scad>
+include <tangent_lines.scad>
 
-assert(TANGENT_LINES_VERSION >= 3, "Use at least a Version 3 of \"Tangen Lines.scad\"");
+assert(TANGENT_LINES_VERSION >= 3, "Use at least version 3 of \"tangent_lines.scad\"");
 
 // The part of the tutorial.
 tutorial_section = 0;
