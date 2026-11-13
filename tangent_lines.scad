@@ -28,8 +28,16 @@
 //   TouchPoint()
 //     The point where circles touch.
 //
+// Version 3.1
+// November 13, 2026
+// By Cameron Brooks
+// License: CC0 (Public Domain)
+// TouchPoint() also handles a circle touching
+// the inside of another. It returned the center
+// of the smaller circle in that case.
+//
 
-TANGENT_LINES_VERSION = 3;
+TANGENT_LINES_VERSION = 3.1;
 
 // PointForInternal
 // ----------------
@@ -154,13 +162,21 @@ function IntersectionPoints(Center1, Radius1, Center2,
 // Parameters: Two circles, defined by
 //   their center point and radius.
 // Return: A single point in 2D
+//   The circles can touch from outside, or one
+//   can touch the inside of the other. Whichever
+//   of the two the distance between the centers
+//   is closer to is assumed.
 // Limits:
 //   If the circles are the same, then
 //   the center point of the circles
 //   is returned.
-function TouchPoint(Center1, Radius1, Center2,
-                    Radius2) = let(d = Center2 - Center1, l_total = norm(d), l_avg = (Radius1 + l_total - Radius2) / 2,
-                                   a = atan2(d.y, d.x))[Center1.x + l_avg * cos(a), Center1.y + l_avg *sin(a)];
+function TouchPoint(Center1, Radius1, Center2, Radius2) =
+    let(d = Center2 - Center1, l_total = norm(d), u = l_total > 0 ? d / l_total : [ 0, 0 ],
+        inside = abs(l_total - abs(Radius1 - Radius2)) < abs(l_total - (Radius1 + Radius2)),
+        // The point on each circle, along the line through the centers,
+        // toward the touch point.
+        s1 = inside && Radius2 > Radius1 ? -1 : 1, s2 = inside && Radius1 > Radius2 ? 1 : -1)
+        (Center1 + s1 * Radius1 * u + Center2 + s2 * Radius2 * u) / 2;
 
 // DrawLine
 // --------
