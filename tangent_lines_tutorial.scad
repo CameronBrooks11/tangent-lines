@@ -25,7 +25,7 @@ include <tangent_lines.scad>
 assert(TANGENT_LINES_VERSION >= 3, "Use at least version 3 of \"tangent_lines.scad\"");
 
 // The part of the tutorial.
-tutorial_section = 0;
+tutorial_section = 0; // [0:1:9]
 
 // The line width, which is used throughout the whole script.
 line_width = 0.7;
