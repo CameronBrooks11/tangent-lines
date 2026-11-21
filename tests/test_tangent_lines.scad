@@ -3,6 +3,7 @@
 // Run: openscad --hardwarnings -o /dev/null --export-format echo tests/test_tangent_lines.scad
 
 include <../tangent_lines.scad>
+use <../examples/belt.scad>
 
 eps = 1e-9;
 
@@ -14,9 +15,9 @@ function tangent_from(p, c, r, q) = on_circle(p, c, r) && abs((p - c) * (p - q))
 function collinear(a, b, c) = abs(cross2(b - a, c - a)) <= eps * max(1, norm(b - a) * norm(c - a));
 
 // Circles used by the tutorial.
-C1 = [ -35, 25 ];
+C1 = [-35, 25];
 R1 = 30;
-C2 = [ 20, -5 ];
+C2 = [20, -5];
 R2 = 15;
 
 // Common points lie on the line through both centres, at distances in the
@@ -30,7 +31,7 @@ assert(near(norm(T2 - C1) / R1, norm(T2 - C2) / R2), "internal point divides the
 assert(near(norm(T2 - C1) + norm(T2 - C2), norm(C2 - C1)), "internal point is between the centres");
 
 // Tangent points from each common point, on each circle.
-for (t = [ T1, T2 ], circle = [ [ C1, R1 ], [ C2, R2 ] ])
+for (t = [T1, T2], circle = [[C1, R1], [C2, R2]])
 {
     P = TangentPoints(circle[0], circle[1], t);
     assert(tangent_from(P[0], circle[0], circle[1], t), str("tangent point 0 from ", t));
@@ -39,7 +40,7 @@ for (t = [ T1, T2 ], circle = [ [ C1, R1 ], [ C2, R2 ] ])
 }
 
 // The same index on both circles lies on the same common tangent line.
-for (t = [ T1, T2 ])
+for (t = [T1, T2])
 {
     P = TangentPoints(C1, R1, t);
     Q = TangentPoints(C2, R2, t);
@@ -48,7 +49,7 @@ for (t = [ T1, T2 ])
 }
 
 // Overlapping circles: both intersection points are on both circles.
-C3 = [ 5, -15 ];
+C3 = [5, -15];
 R3 = 40;
 K = IntersectionPoints(C1, R1, C3, R3);
 for (k = K)
@@ -60,21 +61,27 @@ assert(norm(K[0] - K[1]) > 1, "the two intersection points are distinct");
 
 // Circles touching from outside: the touch point is on both circles.
 R4 = 40;
-C4 = C1 + (R1 + R4) * [ 1, -1 ] / sqrt(2);
+C4 = C1 + (R1 + R4) * [1, -1] / sqrt(2);
 L = TouchPoint(C1, R1, C4, R4);
 assert(on_circle(L, C1, R1), "outside touch point is on the first circle");
 assert(on_circle(L, C4, R4), "outside touch point is on the second circle");
 
 // A small circle touching the inside of a big one, passed in either order.
-Cs = [ -30, 0 ];
+Cs = [-30, 0];
 Rs = 10;
-Cb = [ 0, 0 ];
+Cb = [0, 0];
 Rb = 40;
-for (pair = [ [ Cs, Rs, Cb, Rb ], [ Cb, Rb, Cs, Rs ] ])
+for (pair = [[Cs, Rs, Cb, Rb], [Cb, Rb, Cs, Rs]])
 {
     M = TouchPoint(pair[0], pair[1], pair[2], pair[3]);
     assert(on_circle(M, Cs, Rs), str("inside touch point ", M, " is on the small circle"));
     assert(on_circle(M, Cb, Rb), str("inside touch point ", M, " is on the big circle"));
 }
+
+// The example's belt outline turns the same way at every corner, so its runs do not cross.
+B = belt_corners(C1, R1, C2, R2);
+W = concat(B, [B[0], B[1]]);
+turns = [for (i = [0:3]) sign(cross2(W[i + 1] - W[i], W[i + 2] - W[i + 1]))];
+assert(turns == [1, 1, 1, 1] || turns == [-1, -1, -1, -1], str("belt corners ", B, " turn ", turns));
 
 echo("tangent_lines: all checks passed");

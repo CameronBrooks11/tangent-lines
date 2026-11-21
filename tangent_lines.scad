@@ -51,8 +51,8 @@ TANGENT_LINES_VERSION = 3.1;
 //     Defined by their center points and radius.
 // Return:
 //   A point in 2D
-function PointForInternal(Centre1, Radius1, Centre2, Radius2) = (Radius2 * Centre1 + Radius1 * Centre2) /
-                                                                (Radius2 + Radius1);
+function PointForInternal(Centre1, Radius1, Centre2, Radius2) =
+    (Radius2 * Centre1 + Radius1 * Centre2) / (Radius2 + Radius1);
 
 // PointForExternal
 // ----------------
@@ -73,8 +73,8 @@ function PointForInternal(Centre1, Radius1, Centre2, Radius2) = (Radius2 * Centr
 //   with or without sign as in [±inf,±inf].
 //   The "inf" number in OpenSCAD can be used in calculations.
 //   When the same circle is used twice, then [nan,nan] is returned.
-function PointForExternal(Centre1, Radius1, Centre2, Radius2) = (Radius2 * Centre1 - Radius1 * Centre2) /
-                                                                (Radius2 - Radius1);
+function PointForExternal(Centre1, Radius1, Centre2, Radius2) =
+    (Radius2 * Centre1 - Radius1 * Centre2) / (Radius2 - Radius1);
 
 // TangentPoints
 // -------------
@@ -103,17 +103,23 @@ function PointForExternal(Centre1, Radius1, Centre2, Radius2) = (Radius2 * Centr
 //   When viewing from the big circle to the small
 //   circle, then the first point is on the right.
 //   But I'm not sure.
-function TangentPoints(Centre, Radius, Point) = let(d = Centre - Point,
-                                                    // l1 is distance between center of the circle and the point.
-                                                    // The formula is sqrt(d.x*d.x + d.y*d.y),
-                                                    // but there is a function "norm()" for it.
-                                                    l1 = norm(d),
-                                                    // Prevent that the asin() function fails.
-                                                    l2 = max(l1, Radius),
-                                                    // Calculate the two angles for the resulting tangent points.
-                                                    a = atan2(d.y, d.x) + 180, b = asin(Radius / l2))
-    [[Centre.x + Radius * sin(a + b), Centre.y - Radius *cos(a + b)],
-     [Centre.x - Radius * sin(a - b), Centre.y + Radius *cos(a - b)]];
+function TangentPoints(Centre, Radius, Point) =
+    let (
+        d = Centre - Point,
+        // l1 is distance between center of the circle and the point.
+        // The formula is sqrt(d.x*d.x + d.y*d.y),
+        // but there is a function "norm()" for it.
+        l1 = norm(d),
+        // Prevent that the asin() function fails.
+        l2 = max(l1, Radius),
+        // Calculate the two angles for the resulting tangent points.
+        a = atan2(d.y, d.x) + 180,
+        b = asin(Radius / l2)
+    )
+    [
+            [Centre.x + Radius * sin(a + b), Centre.y - Radius * cos(a + b)],
+            [Centre.x - Radius * sin(a - b), Centre.y + Radius * cos(a - b)],
+    ];
 
 // IntersectionPoints
 // ------------------
@@ -144,11 +150,18 @@ function TangentPoints(Centre, Radius, Point) = let(d = Centre - Point,
 //   by letting the two points melt together
 //   and advance in a continues way through the circle,
 //   when one circle is inside the other circle.
-function IntersectionPoints(Center1, Radius1, Center2,
-                            Radius2) = let(d = Center2 - Center1, l = norm(d),
-                                           t1 = (Radius1 * Radius1 - Radius2 * Radius2 + l * l) / (2 * l),
-                                           t2 = Radius1 * Radius1, t3 = t1 * t1, ta = t2 > t3 ? sqrt(t2 - t3) : 0,
-                                           tb = t2 > t3 ? t1 : -Radius1, k1 = tb * d / l + Center1, k2 = ta * d / l)
+function IntersectionPoints(Center1, Radius1, Center2, Radius2) =
+    let (
+        d = Center2 - Center1,
+        l = norm(d),
+        t1 = (Radius1 * Radius1 - Radius2 * Radius2 + l * l) / (2 * l),
+        t2 = Radius1 * Radius1,
+        t3 = t1 * t1,
+        ta = t2 > t3 ? sqrt(t2 - t3) : 0,
+        tb = t2 > t3 ? t1 : -Radius1,
+        k1 = tb * d / l + Center1,
+        k2 = ta * d / l
+    )
     [[k1.x - k2.y, k1.y + k2.x], [k1.x + k2.y, k1.y - k2.x]];
 
 // TouchPoint
@@ -171,12 +184,17 @@ function IntersectionPoints(Center1, Radius1, Center2,
 //   the center point of the circles
 //   is returned.
 function TouchPoint(Center1, Radius1, Center2, Radius2) =
-    let(d = Center2 - Center1, l_total = norm(d), u = l_total > 0 ? d / l_total : [ 0, 0 ],
+    let (
+        d = Center2 - Center1,
+        l_total = norm(d),
+        u = l_total > 0 ? d / l_total : [0, 0],
         inside = abs(l_total - abs(Radius1 - Radius2)) < abs(l_total - (Radius1 + Radius2)),
         // The point on each circle, along the line through the centers,
         // toward the touch point.
-        s1 = inside && Radius2 > Radius1 ? -1 : 1, s2 = inside && Radius1 > Radius2 ? 1 : -1)
-        (Center1 + s1 * Radius1 * u + Center2 + s2 * Radius2 * u) / 2;
+        s1 = inside && Radius2 > Radius1 ? -1 : 1,
+        s2 = inside && Radius1 > Radius2 ? 1 : -1
+    )
+    (Center1 + s1 * Radius1 * u + Center2 + s2 * Radius2 * u) / 2;
 
 // DrawLine
 // --------
@@ -195,10 +213,9 @@ function TouchPoint(Center1, Radius1, Center2, Radius2) =
 //         translate(pos)
 //           circle(d = line_width);
 //   }
-module DrawLine(Point1, Point2, line_width = 0.5)
-{
+module DrawLine(Point1, Point2, line_width = 0.5) {
     d = Point1 - Point2;
     l = norm(d);
     a = atan2(d.y, d.x) + 180;
-    translate(Point1) rotate(a) translate([ 0, -line_width / 2 ]) square([ l, line_width ]);
+    translate(Point1) rotate(a) translate([0, -line_width / 2]) square([l, line_width]);
 }
