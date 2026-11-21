@@ -1,10 +1,11 @@
 default:
     @just --list
 
-# Run the function checks and render every tutorial section, warnings as errors
+# Run the function checks and render every tutorial section and example, warnings as errors
 test:
     @out=$(openscad --hardwarnings -o - --export-format echo tests/test_tangent_lines.scad 2>/dev/null); echo "$out" | grep -q 'all checks passed' || { echo "$out" | grep -E 'ERROR|WARNING'; exit 1; }; echo "function checks passed"
     @for s in 0 1 2 3 4 5 6 7 8 9; do case $s in 5|9) fmt=binstl;; *) fmt=svg;; esac; log=$(openscad --hardwarnings -D tutorial_section=$s -o - --export-format $fmt tangent_lines_tutorial.scad 2>&1 >/dev/null) || { echo "section $s:"; echo "$log"; exit 1; }; echo "section $s rendered"; done
+    @for f in examples/*.scad; do log=$(openscad --hardwarnings -o - --export-format svg "$f" 2>&1 >/dev/null) || { echo "$f:"; echo "$log"; exit 1; }; echo "$f rendered"; done
 
 # Everything CI runs, bar the tests
 check: fmt-check

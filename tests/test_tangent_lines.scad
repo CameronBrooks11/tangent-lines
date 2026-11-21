@@ -3,6 +3,7 @@
 // Run: openscad --hardwarnings -o /dev/null --export-format echo tests/test_tangent_lines.scad
 
 include <../tangent_lines.scad>
+use <../examples/belt.scad>
 
 eps = 1e-9;
 
@@ -76,5 +77,11 @@ for (pair = [[Cs, Rs, Cb, Rb], [Cb, Rb, Cs, Rs]])
     assert(on_circle(M, Cs, Rs), str("inside touch point ", M, " is on the small circle"));
     assert(on_circle(M, Cb, Rb), str("inside touch point ", M, " is on the big circle"));
 }
+
+// The example's belt outline turns the same way at every corner, so its runs do not cross.
+B = belt_corners(C1, R1, C2, R2);
+W = concat(B, [B[0], B[1]]);
+turns = [for (i = [0:3]) sign(cross2(W[i + 1] - W[i], W[i + 2] - W[i + 1]))];
+assert(turns == [1, 1, 1, 1] || turns == [-1, -1, -1, -1], str("belt corners ", B, " turn ", turns));
 
 echo("tangent_lines: all checks passed");
