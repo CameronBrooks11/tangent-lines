@@ -150,12 +150,7 @@ function TangentPoints(Centre, Radius, Point) =
 //   by letting the two points melt together
 //   and advance in a continues way through the circle,
 //   when one circle is inside the other circle.
-function IntersectionPoints(
-    Center1,
-    Radius1,
-    Center2,
-    Radius2
-) =
+function IntersectionPoints(Center1, Radius1, Center2, Radius2) =
     let (
         d = Center2 - Center1,
         l = norm(d),
