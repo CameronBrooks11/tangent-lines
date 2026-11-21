@@ -175,9 +175,12 @@ the red circles, the final shape can be calculated.
 With [just](https://just.systems/) and OpenSCAD installed:
 
 - `just test` runs the checks in `tests/test_tangent_lines.scad` and renders
-  every tutorial section with OpenSCAD warnings as errors. The checks test
-  geometry: a tangent point lies on its circle with the radius perpendicular to
-  the tangent line, intersection and touch points lie on both circles.
+  every tutorial section and example with OpenSCAD warnings as errors. The
+  checks test geometry: a tangent point lies on its circle with the radius
+  perpendicular to the tangent line, intersection and touch points lie on both
+  circles, and the outline in `examples/belt.scad` does not cross itself.
+- `just check` checks the `.scad` files are formatted with
+  [topiary](https://github.com/tweag/topiary) 0.8.0; `just fmt` formats them.
 - `just images` regenerates the pictures in `assets/`.
 
 ## Changes from the original
@@ -186,6 +189,7 @@ With [just](https://just.systems/) and OpenSCAD installed:
 - `TouchPoint()` handles a circle touching the inside of another (version 3.1).
   It returned the center of the smaller circle in that case.
 - Tests, a justfile, and pictures regenerated from the script.
+- An example, `examples/belt.scad`, and the `.scad` files formatted with topiary.
 
 ## License
 
